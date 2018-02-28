@@ -5,6 +5,7 @@ This Solution permits to build a Temperature Monitor with Alarm, monitorable by 
 The skectch produce a WebPage that use, in case of Internet connection, Bootstrap 4.0 to show the information.
 
 What is needed:
+
 Hardware:
   * 1 x NodeMcu Lua ESP8266 ESP-12E DEV KIT 
   * 1 x DHT 11 Sensor Module
@@ -12,7 +13,9 @@ Hardware:
   * 1 x LED
   * 1 x 220 Ohm Resistor
   * 1 x BreadBoard or a StripBoard or whatelse to connect all the devices
+  
   Software:
+  
   * Arduino IDE 1.8.5
   * ESP8266WiFi Library Installed
   * DHT Library Installed
