@@ -6,7 +6,7 @@ The skectch produce a WebPage that use, in case of Internet connection, Bootstra
 
 What is needed:
 
-Hardware:
+**Hardware:**
   * 1 x NodeMcu Lua ESP8266 ESP-12E DEV KIT 
   * 1 x DHT 11 Sensor Module
   * 1 x Buzzer Module
@@ -14,8 +14,7 @@ Hardware:
   * 1 x 220 Ohm Resistor
   * 1 x BreadBoard or a StripBoard or whatelse to connect all the devices
   
-  Software:
-  
+  **Software:**
   * Arduino IDE 1.8.5
   * ESP8266WiFi Library Installed
   * DHT Library Installed
