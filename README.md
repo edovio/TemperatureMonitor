@@ -20,6 +20,9 @@ What is needed:
   * DHT Library Installed ([LINK](https://github.com/adafruit/DHT-sensor-library))
   * Adafruit_Sensor Library Installed ([LINK](https://github.com/adafruit/Adafruit_Sensor))
   
+  In the Folder [Sketch](https://github.com/edovio/TemperatureMonitor/tree/master/sketch) you will find the Arduino IDE Sketch.
+  In the Folder [Circuit](https://github.com/edovio/TemperatureMonitor/tree/master/circuit) you will find the Circuit.
+  
   If you want to improve the code you are free to create a pull request, or, if you see a Bug, please create an Issue.
   If you need an Help contact me by Email (edovio@gmail.com). Feel free to share it, but remember respect the Licence! <3
 
