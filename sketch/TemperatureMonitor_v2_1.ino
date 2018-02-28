@@ -5,15 +5,15 @@
  * *******************************************************************************************************************/
 
 
-//Librerie per Sensore DHT11
+//Library for the DHT11 sensor
 #include <Adafruit_Sensor.h>
 #include "DHT.h"
 
-//Libreria per ESP8266
+//Library for ESP8266 connection via WiFi
 #include <ESP8266WiFi.h>
 
 
-//Conversione PIN per ESP8266
+//PIN Conversion per ESP8266
 #define D0 16
 #define D1 5
 #define D2 4
@@ -26,44 +26,46 @@
 #define D9 3
 #define D10 1
 
-//Sensori Collegati
+//Sensors connected
 #define buzzer D2
 #define led D3
 
-//Stringhe per utilizzare Bootstrap
+//Strings to use Bootstrap via Internet
 String bootstrap = "<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin='anonymous'>";
 String jQuery = "<script src='https://code.jquery.com/jquery-3.2.1.slim.min.js' integrity='sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN' crossorigin='anonymous'></script>";
 String cdnjs = "<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js' integrity='sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q' crossorigin='anonymous'></script>";
 String bootstrapJs = "<script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js' integrity='sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl' crossorigin='anonymous'></script>";
 
-//Dati accesso WiFi
+//Information to make the WiFi Access in your WLAN
 const char* ssid = "YOUR WiFi SSID";
 const char* password = "YOUR WiFi PASSWORD";
 
-//Variabili delle letture
+//Variable for the Temperature sensor
 int h_index = -100;
 float t_temp = -100;
 float h_temp = -100;
 float t = -100;
 float h = -100;
 
-//Definizione tipo e PIN per il sensore Temperatura
+//Define about the type and PIN Connection for the Temperature Sensor
 #define DHTPIN D1
 #define DHTTYPE DHT11
 
-//Inizializzazione Sensore Temperatura
+//Temperature Sensor Inizialization
 DHT dht(DHTPIN, DHTTYPE);
 
-//Inizializzazione Server
+//Server Inizialization
 WiFiServer server(80);
 
 void setup() {
+  //Inform the Board about the Input and Output PIN
   pinMode(buzzer, OUTPUT);
   pinMode(led, OUTPUT);
   pinMode(DHTPIN, INPUT);
   Serial.begin(115200);
   delay(10);
 
+  //Print information about the WLAN connection
   Serial.println();
   Serial.println();
   Serial.print("Connecting to ");
@@ -71,10 +73,12 @@ void setup() {
 
   WiFi.begin(ssid, password);
 
+  //Wait to have a WLAN connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
+  
   Serial.println("");
   Serial.println("WiFi connected");
 
@@ -91,7 +95,8 @@ void setup() {
 
 void loop() {
   
-//Inizializzazione Variabili con controllo sui valori letti dal Sensore
+//Inizialization of the variable with the data sent from the Sensor with a check of value
+  //If the value is not good the control don't update the value shown in the Web GUI
   if((!isnan(dht.readTemperature()))&& (!isnan(dht.readHumidity()))){
     t = dht.readTemperature();
     h = dht.readHumidity();
@@ -103,28 +108,31 @@ void loop() {
     h = h_temp;
   }
 
-  //Calcolo indice Humidex
+  //Evaluation of the Humidex Index
   h_index = t + (0.5555 * ( 0.06 * h * (pow(10, 0.03 * t)) - 10));
 
-  //Stampo sulla seriale i valori attuali di t e h
+  //Print of the Value on to the Serial Port 
   Serial.print("Temperature = ");
   Serial.print(t);
   Serial.println(" °C");
   Serial.print("Humidity = ");
   Serial.print(h);
   Serial.println(" %");
-  Serial.print("conteggi: ");
-  Serial.println(count);
 
-  //Richiamo Funzione per gli Allarmi HW
+  //Recall at the function Alarm
   alarm(t, h, h_index);
 
-  //Richiamo Funzione per l'invio dei dati
+  //Recall at the function to create the WebPage
   createServer(t, h, h_index);
 }
 
+/**********************************************************************************************************
+*   This function enable the buzzer and the LED with an intermittent sound and light at 440 Hz (A Tone)   *
+*                                     If are true some condition                                          *
+**********************************************************************************************************/
+
 void alarm(float t, float h, float h_index) {
-  //Se la temperatura è al di sotto di 16 °C, Segnale acustico e LED
+  //If the temperature is under 16 °C then Turn on the Led and buzzer intermittents
   if (t <= 16.00) {
     digitalWrite(led, HIGH);
     tone(buzzer, 440, 100);
@@ -138,7 +146,7 @@ void alarm(float t, float h, float h_index) {
     noTone(buzzer);
   }
 
-  //Se la temperatura è al di sopra di 55 °C, Segnale acustico e LED
+  //If the temperature is above of 55 °C then Turn on the Led and buzzer intermittents
   if (t >= 55.00) {
     digitalWrite(led, HIGH);
     tone(buzzer, 440, 100);
@@ -152,7 +160,8 @@ void alarm(float t, float h, float h_index) {
     noTone(buzzer);
   }
 
-  //Se Humidex >= 40 e la temperatura è nel range allora Segnale acustico e LED
+  /* If Humidex Index is >= 40 and the temperature are inside the Range usefull for the Index 
+    then Turn on the Led and buzzer intermittents */
   if (h_index >= 40 && t >= 20.00 && t <= 55.00) {
     digitalWrite(led, HIGH);
     tone(buzzer, 440, 100);
@@ -167,29 +176,35 @@ void alarm(float t, float h, float h_index) {
   }
 }
 
-//Funzione che Genera pagina HTML per visualizzare in locale i dati del Dispositivo
+/**********************************************************************************************************
+*                       This function produce an HTML page that use Bootstrap 4.0                         *
+*                                      when a Client is connected                                         *
+*            moreover create dynamically alert in function of the Temperature read from the sensor        *
+**********************************************************************************************************/
+
 void createServer(float t, float h, int h_index) {
   WiFiClient client = server.available();
   delay(1);
+  //if don't exist a client then print a messagge in the Serial Port
   if (!client) {
-    Serial.println("Nessun Client è connesso");
+    Serial.println("No Client connected");
     delay(1000);
   }
+  //else print a messagge in the Serial Port, build the HTTP Request and the HTML page
   else {
     Serial.println("E' connesso un Client");
-    count++;
-    //Esiste un Client e scrivo Pagina WEB
-    //Write HTML
+
+    //Write HTTP Request
     client.println("HTTP/1.1 200 OK");
     client.println("Content-Type: text/html");
     client.println(""); //  do not forget this one
+    
+    //Start to Write the HTML
     client.println("<!DOCTYPE HTML>");
-
-    //Codice HTML
-
     //Change the Lang in base of your
     client.println("<html lang='it-IT'>");
-    //HEAD HTML
+    
+    //HEAD  of HTML Page
     client.println("<head>");
     client.println("<meta http-equiv='refresh' content='5'>");
     client.println("<meta charset='utf-8'>");
@@ -200,42 +215,47 @@ void createServer(float t, float h, int h_index) {
     client.println(bootstrapJs);
     client.println("</head>");
 
-    //BODY HTML
+    //BODY of HTML Page
       client.println("<body>");
 
-    //NAVBAR
+    //NAVBAR 
     client.println("<div class='navbar navbar-expand-lg navbar-dark bg-dark'>");
     client.println("<a class='navbar-brand' href='#'>Monitor Temperatura</a>");
     client.println("</div>");
     client.println("<hr>");
 
-    //Blocco Info su Temperatura
+    //Info Block Temperature
+    //if the temperature is under 16 °C than send an Alert info
     if (t <= 16.00) {
-      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Attenzione La temperatura e' bassa!");
+      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Attention the Temperature is Low!");
       client.println("<button type='button' class='close' data-dismiss='alert' aria-label='Close'>");
       client.println("<span aria-hidden='true'>&times;</span></button></div>");
     }
+    //if the temperature is above of 55 °C than send an Alert info
     if (t >= 55.00) {
-      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Pericolo! La temperatura e' troppo alta!");
+      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Danger! the Temperature is to High!");
       client.println("<button type='button' class='close' data-dismiss='alert' aria-label='Close'>");
       client.println("<span aria-hidden='true'>&times;</span></button></div>");
     }
 
-    //Blocco Info su Umidità
+    //Info Block Humidity
+    //if the Humidity is less than, or equal at 40% and the Temperature more than 25 °C than send an Alert info
     if (h <= 40.00 && t > 25.00) {
-      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Attenzione alla Umidita'!");
+      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Attention at the Humidity!");
       client.println("<button type='button' class='close' data-dismiss='alert' aria-label='Close'>");
       client.println("<span aria-hidden='true'>&times;</span></button></div>");
     }
+    //else if the Humidity is more than 65% and the Temperature more than 25 °C than send an Alert info
     else if (h > 65 && t > 25.00) {
-      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Attenzione alla Umidita'!");
+      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Attention at the Humidity!");
       client.println("<button type='button' class='close' data-dismiss='alert' aria-label='Close'>");
       client.println("<span aria-hidden='true'>&times;</span></button></div>");
     }
 
-    //Blocco info su Humidex
+    //Info Block Humidex
+    //if the Humidex is more than 40 and the temperature between 20 °C and 55 °C than send a Danger info
     if (h_index >= 40 && t >= 20.00 && t <= 55.00) {
-      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Pericolo! Evitare sforzi, cercare un luogo fresco e asciutto nelle vicinanze!");
+      client.println("<div class='alert alert-danger alert-dismissible fade show' role='alert'> Danger! Avoid efforts, look for a cool, dry place nearby!");
       client.println("<button type='button' class='close' data-dismiss='alert' aria-label='Close'>");
       client.println("<span aria-hidden='true'>&times;</span></button></div>");
     }
@@ -243,63 +263,77 @@ void createServer(float t, float h, int h_index) {
     //CONTENT
     client.println("<div class='container-fluid'>");
 
-    //Blocco Temperatura (Colonna 1)
+    //Temperature Block (Column 1)
     client.println("<div class ='row justify-content-around'>");
     client.println("<div class='col-5 alert alert-info'>");
-    client.println("<p class = 'text-centered'> Temperatura attuale: ");
+    client.println("<p class = 'text-centered'> Actual Temperature: ");
     client.println(t);
+    //Badge for Temperature
+    //if the Temperature is under 16 °C  than a Danger Badge
     if (t <= 16.00) {
-      client.println("Gradi <span class = 'badge badge-danger'>Pericolo</span> </p> ");
+      client.println("Gradi <span class = 'badge badge-danger'>Danger</span> </p> ");
     }
+    //if the Temperature is between 16 °C  and 20 °C than an Attention Badge
     if (t > 16.00 && t < 20.00) {
-      client.println(" Gradi <span class = 'badge badge-warning'>Attenzione</span> </p> ");
+      client.println(" Gradi <span class = 'badge badge-warning'>Attention</span> </p> ");
     }
+    //if the Temperature is above of 35 °C  than a Danger Badge
     if ( t > 35.00) {
-      client.println(" Gradi <span class = 'badge badge-danger'>Pericolo</span> </p> ");
+      client.println(" Gradi <span class = 'badge badge-danger'>Danger</span> </p> ");
     }
+    //if the Temperature is between 20 °C  and 25 °C than an Good Badge
     if (t >= 20.00 && t < 25.00) {
-      client.println("Gradi <span class = 'badge badge-success'>Ottimo</span> </p> ");
+      client.println("Gradi <span class = 'badge badge-success'>Good</span> </p> ");
     }
+    //if the Temperature is between 25 °C  and 35 °C than an Attention Badge
     if (t >= 25.00 && t <= 35.00) {
-      client.println(" Gradi <span class = 'badge badge-warning'>Attenzione</span> </p> ");
+      client.println(" Gradi <span class = 'badge badge-warning'>Attention</span> </p> ");
     }
     client.println("</div>");
 
-    //Blocco Umidità (Colonna 2)
+    //Humidity Block (Column 2)
     client.println("<div class='col-5 alert alert-info'>");
-    client.println("<p class = 'text-centered'> Umidita' attuale: ");
+    client.println("<p class = 'text-centered'> Actual Humidity: ");
     client.println(h);
+    //if the Humidity is equal or under 40 % than an Attention Badge
     if (h <= 40.00) {
-      client.println(" % <span class = 'badge badge-warning'>Attenzione</span> </p> ");
+      client.println(" % <span class = 'badge badge-warning'>Attention</span> </p> ");
     }
+    //if the Humidity is between 40% and 65% than a Good Badge
     if (h > 40.00 && h < 65.00) {
-      client.println(" % <span class = 'badge badge-success'>Ottimo</span> </p> ");
+      client.println(" % <span class = 'badge badge-success'>Good</span> </p> ");
     }
+    //if the Humidity is above of 65%  than an Attention Badge
     else if ( h >= 65.00) {
-      client.println(" % <span class = 'badge badge-warning'>Attenzione</span> </p> ");
+      client.println(" % <span class = 'badge badge-warning'>Attention</span> </p> ");
     }
     client.println("</div>");
     client.println("</div>");
 
     client.println("<hr>");
 
-    //Blocco Indice Humidex
+    //Humidex Index Block
     client.println("<div class ='row justify-content-around'>");
     client.println(" <div class ='col-11 alert alert-info'>");
-    client.println("<p class = 'text-centered'> Indice Humidex: ");
+    client.println("<p class = 'text-centered'> Humidex Index: ");
     client.println(h_index);
+    //If Humidex is under 27 than a Good Badge
     if (h_index < 27) {
-      client.println("<span class = 'badge badge-success'>Ottimo</span> </p> ");
+      client.println("<span class = 'badge badge-success'>Good</span> </p> ");
     }
+    //if the Humidex is between 27 and 30 than an Attention Badge
     if (h_index >= 27 && h_index < 30) {
-      client.println("<span class = 'badge badge-warning'>Attenzione</span></p> ");
+      client.println("<span class = 'badge badge-warning'>Attention</span></p> ");
     }
+    //if the Humidex is between 30 and 40 than an Attention Badge
     if (h_index >= 30 && h_index < 40) {
       client.println("<span class = 'badge badge-warning'>Attenzione</span></p> ");
     }
+    //if the Humidex is between 40 and 55 than a Danger Badge
     if (h_index >= 40 && h_index < 55) {
-      client.println("<span class = 'badge badge-danger'>Pericolo</span> </p> ");
+      client.println("<span class = 'badge badge-danger'>Danger</span> </p> ");
     }
+    //if the Humidex is above or equal 55 than a Danger Badge
     if (h_index >= 55) {
       client.println("<span class = 'badge badge-danger'>Pericolo</span> </p> ");
     }
