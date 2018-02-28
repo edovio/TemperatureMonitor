@@ -15,11 +15,11 @@ What is needed:
   * 1 x BreadBoard or a StripBoard or whatelse to connect all the devices
   
   **Software:**
-  * Arduino IDE 1.8.5
-  * ESP8266WiFi Library Installed
-  * DHT Library Installed
-  * Adafruit_Sensor Library Installed
+  * Arduino IDE 1.8.5 ([LINK](https://www.arduino.cc/en/Main/Software))
+  * ESP8266WiFi Library Installed ([LINK](https://github.com/esp8266/Arduino))
+  * DHT Library Installed ([LINK](https://github.com/adafruit/DHT-sensor-library))
+  * Adafruit_Sensor Library Installed ([LINK](https://github.com/adafruit/Adafruit_Sensor))
 
-The project is shared under Creative Commons Licence - Attribution 4.0 International (CC BY 4.0).
+This project is shared under Creative Commons Licence - Attribution 4.0 International (CC BY 4.0).
 
 Visit the [Licence](https://github.com/edovio/TemperatureMonitor/blob/master/LICENSE.md) document for further information.
