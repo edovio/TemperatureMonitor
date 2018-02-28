@@ -1,5 +1,22 @@
 # TemperatureMonitor
-Temperature Monitor based with ESP8266 monitorable via Browser
+Temperature Monitor based with ESP8266 monitorable via Browser on Local Area Network
+
+This Solution permits to build a Temperature Monitor with Alarm, monitorable by every Browser.
+The skectch produce a WebPage that use, in case of Internet connection, Bootstrap 4.0 to show the information.
+
+What is needed:
+Hardware:
+  * 1 x NodeMcu Lua ESP8266 ESP-12E DEV KIT 
+  * 1 x DHT 11 Sensor Module
+  * 1 x Buzzer Module
+  * 1 x LED
+  * 1 x 220 Ohm Resistor
+  * 1 x BreadBoard or a StripBoard or whatelse to connect all the devices
+  Software:
+  * Arduino IDE 1.8.5
+  * ESP8266WiFi Library Installed
+  * DHT Library Installed
+  * Adafruit_Sensor Library Installed
 
 The project is shared under Creative Commons Licence - Attribution 4.0 International (CC BY 4.0).
 
