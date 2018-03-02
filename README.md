@@ -24,6 +24,10 @@ What is needed:
   
   In the Folder **[Circuit](https://github.com/edovio/TemperatureMonitor/tree/master/circuit)** you will find the Circuit.
   
+  Screenshot of the WebPage built:
+  
+  ![Screenshot](https://github.com/edovio/TemperatureMonitor/blob/master/screenshot/Screenshoot%20MonitorTemperature.png Temperature Monitor)
+  
   If you want to improve the code you are free to create a pull request, or, if you see a Bug, please create an Issue.
   If you need an Help contact me by Email (edovio@gmail.com). Feel free to share it, but remember respect the Licence! <3
 
