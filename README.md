@@ -29,7 +29,7 @@ What is needed:
   ![Screenshot](https://github.com/edovio/TemperatureMonitor/blob/master/screenshot/Screenshoot%20MonitorTemperature.png "Temperature Monitor")
   
   If you want to improve the code you are free to create a pull request, or, if you see a Bug, please create an Issue.
-  If you need an Help contact me by Email (edovio@gmail.com). Feel free to share it, but remember respect the Licence! <3
+  If you need an Help contact me by Email (edovio@pm.me). Feel free to share it, but remember respect the Licence! <3
 
 This project is shared under Creative Commons Licence - Attribution 4.0 International (CC BY 4.0).
 Visit the [Licence](https://github.com/edovio/TemperatureMonitor/blob/master/LICENSE.md) document for further information.
